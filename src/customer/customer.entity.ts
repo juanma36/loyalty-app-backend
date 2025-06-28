@@ -9,6 +9,9 @@ export class Customer {
   name: string;
 
   @Column()
+  email: string;
+
+  @Column()
   phone: string;
 
   @Column({ default: 0 })
