@@ -1,50 +1,33 @@
 #!/bin/bash
 
-# Script de despliegue para EC2
-echo "🚀 Iniciando despliegue de Loyalty App Backend..."
+# Script simplificado de despliegue que usa archivo de configuración
+# Uso: ./deploy.sh
 
-# Actualizar el sistema
-echo "📦 Actualizando el sistema..."
-sudo yum update -y
+# Cargar configuración
+if [ -f ".env.deploy" ]; then
+    source .env.deploy
+else
+    echo "❌ Error: No se encontró el archivo .env.deploy"
+    echo "📝 Crea el archivo copiando deploy-config.env como .env.deploy"
+    echo "🔧 Luego modifica las variables con tu información"
+    exit 1
+fi
 
-# Instalar Docker
-echo "🐳 Instalando Docker..."
-sudo yum install -y docker
-sudo service docker start
-sudo usermod -a -G docker ec2-user
+# Verificar configuración
+if [ "$EC2_IP" = "TU_IP_PUBLICA_AQUI" ] || [ -z "$EC2_IP" ]; then
+    echo "❌ Error: Debes configurar EC2_IP en .env.deploy"
+    exit 1
+fi
 
-# Instalar Docker Compose
-echo "📋 Instalando Docker Compose..."
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+if [ "$PEM_FILE" = "TU_ARCHIVO_PEM_AQUI" ] || [ -z "$PEM_FILE" ]; then
+    echo "❌ Error: Debes configurar PEM_FILE en .env.deploy"
+    exit 1
+fi
 
-# Crear directorio para la aplicación
-echo "📁 Creando directorio de la aplicación..."
-mkdir -p /home/ec2-user/loyalty-app-backend
-cd /home/ec2-user/loyalty-app-backend
+if [ ! -f "$PEM_FILE" ]; then
+    echo "❌ Error: El archivo PEM no existe: $PEM_FILE"
+    exit 1
+fi
 
-# Crear archivo .env con las variables de entorno
-echo "🔧 Configurando variables de entorno..."
-cat > .env << EOF
-# Database Configuration
-DB_HOST=loyalty-app-db.czme82402gkh.us-east-2.rds.amazonaws.com
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=Gian!1978
-DB_DATABASE=loyalty-app-db
-
-# Application Configuration
-NODE_ENV=production
-PORT=3000
-EOF
-
-echo "✅ Variables de entorno configuradas"
-
-# Construir y ejecutar la aplicación
-echo "🔨 Construyendo la aplicación..."
-sudo docker-compose -f docker-compose.prod.yml up -d --build
-
-echo "🎉 ¡Despliegue completado!"
-echo "📊 La aplicación está ejecutándose en: http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):3000"
-echo "📝 Para ver los logs: sudo docker-compose -f docker-compose.prod.yml logs -f"
-echo "🛑 Para detener: sudo docker-compose -f docker-compose.prod.yml down" 
+# Ejecutar el script completo
+./deploy-to-aws.sh 
