@@ -25,7 +25,7 @@ Edita el archivo `.env.deploy` con tu información:
 EC2_IP="3.17.71.235"
 
 # Ruta a tu archivo PEM
-PEM_FILE="/Users/juan.gonzalez/Downloads/loyalty-app-key.pem"
+PEM_FILE="/Users/juan.gonzalez/Downloads/loyalty-app-dev.pem"
 ```
 
 ### 3. Dar Permisos de Ejecución
