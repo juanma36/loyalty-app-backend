@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  loyalty-app-backend:
+    build: .
+    container_name: loyalty-app-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=loyalty-app-db.czme82402gkh.us-east-2.rds.amazonaws.com
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=Gian!1978
+      - DB_DATABASE=loyalty-app-db
+      - NODE_ENV=production
+      - PORT=3000
+      - AWS_REGION=us-east-2
+      - COGNITO_USER_POOL_ID=us-east-2_Zd4Fjk1Zr
+      - COGNITO_CLIENT_ID=2rlcmror1o7k8t1m7h6l1kkcok
+      - COGNITO_CLIENT_SECRET=s3kivbv1h85mq172q88klcbqsetg82qjrps5i36ha1v0sljsaa4
+    restart: unless-stopped
+    depends_on: []
+    networks:
+      - loyalty-app-network
+
+networks:
+  loyalty-app-network:
+    driver: bridge 
